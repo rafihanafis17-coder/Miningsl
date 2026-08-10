@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gold Mine</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- ===== RUNNING TEXT ===== -->
+    <div id="runningText" style="display:none; background: linear-gradient(90deg, #f0b400, #ff6b00); color: #0a0e17; padding: 6px 0; font-weight: bold; font-size: 14px; overflow: hidden; white-space: nowrap; position: sticky; top: 0; z-index: 999;">
+        <span id="runningTextContent" style="display: inline-block; padding-left: 100%; animation: marquee 20s linear infinite;">Loading...</span>
+    </div>
+    <style>
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+    </style>
+
+    <!-- ===== LOGIN PAGE ===== -->
+    <div id="loginPage">
+        <div class="auth-box">
+            <div class="logo">
+                <h1>⛏️ Gold Mine</h1>
+                <p>Mulai petualangan tambangmu!</p>
+            </div>
+            <div class="tab-row">
+                <button class="tab-btn active" onclick="showTab('login')">Login</button>
+                <button class="tab-btn" onclick="showTab('register')">Register</button>
+            </div>
+            <div id="loginForm" class="form active">
+                <div class="input-group">
+                    <label>📧 Email / Username</label>
+                    <input type="text" id="loginEmail" placeholder="Masukkan email atau username">
+                </div>
+                <div class="input-group">
+                    <label>🔒 Password</label>
+                    <input type="password" id="loginPassword" placeholder="Masukkan password">
+                    <span style="cursor:pointer;" onclick="togglePassword('loginPassword','loginIcon')" id="loginIcon">👁️</span>
+                </div>
+                <button class="btn btn-gold" onclick="handleLogin()">Login</button>
+                <div style="text-align:right;margin-top:8px;">
+                    <span style="color:#f0b400;cursor:pointer;font-size:13px;" onclick="resetPassword()">Lupa Password?</span>
+                </div>
+                <div id="loginMessage" class="msg"></div>
+            </div>
+            <div id="registerForm" class="form">
+                <div class="input-group">
+                    <label>👤 Username</label>
+                    <input type="text" id="regUsername" placeholder="Pilih username">
+                </div>
+                <div class="input-group">
+                    <label>📧 Email</label>
+                    <input type="email" id="regEmail" placeholder="Masukkan email">
+                </div>
+                <div class="input-group">
+                    <label>🔒 Password</label>
+                    <input type="password" id="regPassword" placeholder="Minimal 6 karakter">
+                    <span style="cursor:pointer;" onclick="togglePassword('regPassword','regIcon')" id="regIcon">👁️</span>
+                </div>
+                <button class="btn btn-green" onclick="handleRegister()">Daftar</button>
+                <div id="registerMessage" class="msg"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== DASHBOARD ===== -->
+    <div id="app" style="display:none;">
+        
+        <nav class="navbar">
+            <div class="nav-brand">⛏️ Gold Mine</div>
+            <div class="nav-gold" id="goldDisplay">💰 0</div>
+            <div class="nav-user">
+                <span id="usernameDisplay">Player</span>
+                <button class="btn-logout" onclick="handleLogout()">🚪</button>
+            </div>
+        </nav>
+
+        <div class="sidebar">
+            <div class="menu-item active" onclick="showPage('game')">🎮 Game</div>
+            <div class="menu-item" onclick="showPage('market')">🏪 Market</div>
+            <div class="menu-item" onclick="showPage('chat')">💬 Chat</div>
+            <div class="menu-item" onclick="showPage('profile')">👤 Profile</div>
+            <div class="menu-item" onclick="showPage('leaderboard')">🏆 Leaderboard</div>
+            <div class="menu-item admin-only" id="adminMenu" onclick="showPage('admin')" style="display:none; border-top:1px solid rgba(255,255,255,0.1); margin-top:10px; padding-top:15px; color:#ff6b35;">🛡️ Admin</div>
+        </div>
+
+        <div class="content">
+            
+<!-- ===== PAGE: GAME ===== -->
+<div id="page-game" class="page active">
+    <h2>🎮 Pilih Game</h2>
+    <div class="games-grid">
+        <div class="game-card" onclick="showPage('mining')">
+            <div class="game-icon">⛏️</div>
+            <h3>Mining</h3>
+            <p>Tambang gold!</p>
+            <button class="btn-play">Mainkan</button>
+        </div>
+        <!-- KARTU FARM (TAMBAHKAN DI DALAM games-grid) -->
+<div class="game-card" onclick="showPage('farm')">
+    <div class="game-icon">🌾</div>
+    <h3>Peternakan</h3>
+    <p>Ternak hewan & panen!</p>
+    <button class="btn-play">Kandang</button>
+</div>
+        <div class="game-card" onclick="showPage('spin')">
+            <div class="game-icon">🎰</div>
+            <h3>Spin Slot</h3>
+            <p>Putar slot, dapat gold!</p>
+            <button class="btn-play">Mainkan</button>
+        </div>
+        <div class="game-card" onclick="showPage('plinko')">
+            <div class="game-icon">🪙</div>
+            <h3>Plinko</h3>
+            <p>Jatuhkan bola!</p>
+            <button class="btn-play">Mainkan</button>
+        </div>
+        <div class="game-card" onclick="showPage('mineboom')">
+            <div class="game-icon">💣</div>
+            <h3>MineBoom</h3>
+            <p>Buka kotak, hindari bom!</p>
+            <button class="btn-play">Mainkan</button>
+        </div>
+        <div class="game-card" onclick="showPage('pvp')">
+            <div class="game-icon">⚔️</div>
+            <h3>PVP</h3>
+            <p>Battle pemain lain!</p>
+            <button class="btn-play">Mainkan</button>
+        </div>
+        <div class="game-card" onclick="showPage('dice')">
+            <div class="game-icon">🎲</div>
+            <h3>Lucky Dice</h3>
+            <p>Tebak ganjil/genap!</p>
+            <button class="btn-play">Mainkan</button>
+        </div>
+        <div class="game-card" onclick="showPage('auction')">
+            <div class="game-icon">🔨</div>
+            <h3>Lelang</h3>
+            <p>Bid item langka!</p>
+            <button class="btn-play">Lihat</button>
+        </div>
+        <div class="game-card" onclick="showPage('box')">
+            <div class="game-icon">📦</div>
+            <h3>Box Misteri</h3>
+            <p>Dapatkan material!</p>
+            <button class="btn-play">Buka</button>
+        </div>
+        <div class="game-card" onclick="showPage('transfer')">
+            <div class="game-icon">💸</div>
+            <h3>Transfer</h3>
+            <p>Kirim gold & material</p>
+            <button class="btn-play">Kirim</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== PAGE: MINING ===== -->
+<div id="page-mining" class="page">
+    <button class="btn-back" onclick="showPage('game')">⬅️ Kembali</button>
+    <h2>⛏️ Tambang Gold</h2>
+    <p style="color:#8899aa;margin-bottom:16px;">Klik mulai, tunggu 5 menit, claim gold!</p>
+    <div class="mines-grid" id="minesGrid"></div>
+    <div id="mineResult" class="mine-result"></div>
+</div>
+<!-- ===== PAGE: FARM ===== -->
+<div id="page-farm" class="page">
+    <button class="btn-back" onclick="showPage('game')">⬅️ Kembali</button>
+    <h2>🌾 Peternakan</h2>
+    <p style="color:#8899aa;margin-bottom:16px;">Pilih hewan, kasih pakan, panen gold!</p>
+    
+    <!-- Inventory Hewan -->
+    <div class="farm-inventory">
+        <h4>📦 Inventory Hewan</h4>
+        <div id="farmInventory" class="farm-inventory-grid">
+            <span>🐔 Telur Ayam: <span id="farmInvAyam">0</span></span>
+            <span>🦆 Telur Bebek: <span id="farmInvBebek">0</span></span>
+            <span>🐐 Anak Kambing: <span id="farmInvKambing">0</span></span>
+            <span>🐄 Anak Sapi: <span id="farmInvSapi">0</span></span>
+        </div>
+    </div>
+
+    <!-- 6 Kandang -->
+    <div class="farm-slots" id="farmSlotsContainer">
+        <!-- Di-render oleh JS -->
+    </div>
+
+    <!-- Notifikasi / Hasil -->
+    <div id="farmResult" class="farm-result"></div>
+</div>
+<!-- ===== PAGE: SPIN ===== -->
+<div id="page-spin" class="page">
+    <button class="btn-back" onclick="showPage('game')">⬅️ Kembali</button>
+    <h2>🎰 Spin Slot</h2>
+    <p style="color:#8899aa;margin-bottom:16px;">Putar slot dan menangkan gold!</p>
+    <div class="spin-container">
+        <div class="slot-reels">
+            <div class="reel" id="reel1">🍒</div>
+            <div class="reel" id="reel2">🍒</div>
+            <div class="reel" id="reel3">🍒</div>
+        </div>
+        <div class="spin-controls">
+            <label>Taruhan:</label>
+            <input type="number" id="spinBet" value="10" min="1">
+            <button class="btn-spin" onclick="spinSlot()">🎰 SPIN!</button>
+        </div>
+        <div class="auto-spin-controls">
+            <label>Auto Spin:</label>
+            <select id="autoSpinRounds">
+                <option value="10">10x</option>
+                <option value="100">100x</option>
+                <option value="1000">1000x</option>
+            </select>
+            <button class="btn-auto" onclick="startAutoSpin()">▶️ Mulai Auto</button>
+            <button class="btn-auto-stop" onclick="stopAutoSpin()" style="display:none;">⏹️ Stop</button>
+            <span id="autoSpinStatus" style="color:#8899aa;font-size:14px;margin-left:12px;"></span>
+        </div>
+        <div id="spinResult" class="spin-result"></div>
+    </div>
+</div>
+
+<!-- ===== PAGE: PLINKO ===== -->
+<div id="page-plinko" class="page">
+    <button class="btn-back" onclick="showPage('game')">⬅️ Kembali</button>
+    <h2>🪙 Plinko</h2>
+    <p style="color:#8899aa;margin-bottom:16px;">Jatuhkan bola, dapatkan hadiah di slot bawah!</p>
+    <div class="plinko-container">
+        <div class="plinko-board" id="plinkoBoard"></div>
+        <div class="plinko-controls">
+            <label>Bet:</label>
+            <select id="plinkoBet">
+                <option value="500">500 Gold</option>
+                <option value="1000">1.000 Gold</option>
+                <option value="5000">5.000 Gold</option>
+                <option value="10000">10.000 Gold</option>
+            </select>
+            <button class="btn-plinko" onclick="dropPlinko()">🟡 Jatuhkan!</button>
+            <span id="plinkoResult" class="plinko-result"></span>
+        </div>
+    </div>
+</div>
+
+<!-- ===== PAGE: MINEBOOM ===== -->
+<div id="page-mineboom" class="page">
+    <button class="btn-back" onclick="showPage('game')">⬅️ Kembali</button>
+    <h2>💣 MineBoom</h2>
+    <p style="color:#8899aa;margin-bottom:16px;">Pilih ruangan, buka kotak, hindari bom!</p>
+    <div id="mineboomRoomsContainer" class="mineboom-rooms">
+        <!-- Akan di-render oleh JS -->
+    </div>
+    <div id="mineboomGameArea" style="display:none; margin-top:20px;">
+        <div class="mineboom-board" id="mineboomBoard"></div>
+        <div class="mineboom-controls">
+            <span id="mineboomStatus" style="color:#ccddee;"></span>
+            <button class="btn-cashout" onclick="cashOutMineBoom()" style="display:none;">💰 Ambil Hadiah</button>
+            <button class="btn-mineboom" onclick="resetMineBoom()">🔄 Mulai Ulang</button>
+        </div>
+        <div id="mineboomResult" class="mineboom-result"></div>
+    </div>
+</div>
+
+<!-- ===== PAGE: PVP ===== -->
+<div id="page-pvp" class="page">
+    <button class="btn-back" onclick="showPage('game')">⬅️ Kembali</button>
+    <h2>⚔️ PVP Battle</h2>
+    <p style="color:#8899aa;margin-bottom:16px;">Pasang bet, menangkan pot!</p>
+    <div class="pvp-rooms">
+        <div class="pvp-room-card" onclick="selectPvpRoom(1)">
+            <h3>🔵 Ruangan 1</h3>
+            <p>Bet: 10.000 – 1.000.000 Gold</p>
+            <button class="btn-room">Pilih</button>
+        </div>
+        <div class="pvp-room-card" onclick="selectPvpRoom(2)">
+            <h3>🟣 Ruangan 2</h3>
+            <p>Bet: 5.000.000 – 50.000.000 Gold</p>
+            <button class="btn-room">Pilih</button>
+        </div>
+    </div>
+    <div id="pvpGameArea" style="display:none; margin-top:20px;">
+        <div class="pvp-info">
+            <div class="pvp-stat"><span>👥 Player:</span> <span id="pvpPlayerCount">0</span></div>
+            <div class="pvp-stat"><span>⏱️ Time:</span> <span id="pvpTimer">00:00</span></div>
+            <div class="pvp-stat"><span>💰 Total Pot:</span> <span id="pvpPot">0</span></div>
+            <div class="pvp-stat"><span>📊 Persenanmu:</span> <span id="pvpPercent">0%</span></div>
+        </div>
+        <div class="pvp-last-winner">
+            <span>🏆 Last Winner: <span id="pvpLastWinner">-</span></span>
+            <span>💰 <span id="pvpLastWin">0</span> Gold</span>
+        </div>
+        <div class="pvp-bet-area">
+            <label>Bet:</label>
+            <input type="number" id="pvpBetInput" placeholder="Jumlah bet">
+            <button class="btn-pvp-bet" onclick="placePvpBet()">💎 Pasang Bet</button>
+            <span id="pvpBetMessage" class="pvp-message"></span>
+        </div>
+        <div id="pvpResult" class="pvp-result"></div>
+    </div>
+</div>
+
+<!-- ===== PAGE: LUCKY DICE ===== -->
+<div id="page-dice" class="page">
+    <button class="btn-back" onclick="showPage('game')">⬅️ Kembali</button>
+    <h2>🎲 Lucky Dice</h2>
+    <p style="color:#8899aa;margin-bottom:16px;">Tebak ganjil atau genap, menangkan 2x lipat!</p>
+    <div class="dice-container">
+        <div class="dice-display">
+            <div class="dice-animation" id="diceResult">🎲</div>
+        </div>
+        <div class="dice-controls">
+            <label>Bet:</label>
+            <input type="number" id="diceBet" value="100" min="100">
+            <div class="dice-buttons">
+                <button class="btn-dice-odd" onclick="playDice('odd')">🔴 Ganjil</button>
+                <button class="btn-dice-even" onclick="playDice('even')">🔵 Genap</button>
+            </div>
+            <span id="diceMessage" class="dice-message"></span>
+            <div class="dice-stats">
+                <span>🏆 Menang: <span id="diceWins">0</span></span>
+                <span>💀 Kalah: <span id="diceLosses">0</span></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== PAGE: AUCTION ===== -->
+<div id="page-auction" class="page">
+    <button class="btn-back" onclick="showPage('game')">⬅️ Kembali</button>
+    <h2>🔨 Lelang</h2>
+    <p style="color:#8899aa;margin-bottom:16px;">Bid item langka dari admin!</p>
+    <div id="auctionList" class="auction-list">
+        <p style="color:#8899aa;">Loading...</p>
+    </div>
+    <div id="auctionDetail" style="display:none; margin-top:20px; background:rgba(255,255,255,0.03); border-radius:12px; padding:16px; border:1px solid rgba(255,255,255,0.05);">
+        <h3 id="auctionItemName">Item</h3>
+        <p id="auctionDesc">Deskripsi</p>
+        <p>💰 Harga Saat Ini: <span id="auctionCurrentBid">0</span> Gold</p>
+        <p>👤 Bid Tertinggi: <span id="auctionTopBidder">-</span></p>
+        <p>⏱️ Sisa Waktu: <span id="auctionTimeLeft">-</span></p>
+        <div class="auction-bid-area">
+            <label>Bid (kelipatan <span id="auctionMinIncrement">0</span>):</label>
+            <input type="number" id="auctionBidInput" placeholder="Jumlah bid">
+            <button class="btn-auction-bid" onclick="placeBid()">🚀 Pasang Bid</button>
+            <span id="auctionBidMessage" class="auction-message"></span>
+        </div>
+    </div>
+</div>
+
+<!-- ===== PAGE: BOX ===== -->
+<div id="page-box" class="page">
+    <button class="btn-back" onclick="showPage('game')">⬅️ Kembali</button>
+    <h2>📦 Box Misteri</h2>
+    <p style="color:#8899aa;margin-bottom:16px;">Beli box untuk dapat material & hewan!</p>
+    <div id="boxGridContainer" class="box-grid">
+        <!-- Akan di-render oleh JS -->
+    </div>
+    <div id="boxResult" class="box-result"></div>
+</div>
+
+<!-- ===== PAGE: TRANSFER ===== -->
+<div id="page-transfer" class="page">
+    <button class="btn-back" onclick="showPage('game')">⬅️ Kembali</button>
+    <h2>💸 Transfer Gold & Gift</h2>
+    <div class="transfer-container">
+        <!-- Cari Player -->
+        <div class="input-group">
+            <label>👤 Username Tujuan</label>
+            <input type="text" id="transferUsername" placeholder="Masukkan username">
+            <button class="btn-small" onclick="cariPlayer()">🔍 Cari</button>
+        </div>
+        <div id="transferTarget" style="display:none;background:rgba(255,255,255,0.03);padding:12px;border-radius:8px;margin:12px 0;">
+            <p>✅ Player ditemukan: <strong id="targetName"></strong></p>
+            <p>💰 Gold: <span id="targetGold"></span></p>
+        </div>
+
+        <!-- Transfer Gold -->
+        <div class="input-group">
+            <label>💰 Kirim Gold</label>
+            <input type="number" id="transferGoldAmount" placeholder="Jumlah gold" min="1">
+            <button class="btn btn-gold" onclick="transferGold()">Kirim Gold</button>
+        </div>
+
+        <!-- Gift Material / Hewan -->
+        <div class="input-group">
+            <label>🎁 Gift Material atau Hewan</label>
+            <select id="giftMaterialType">
+                <!-- MATERIAL -->
+                <option value="palu">🔨 Palu</option>
+                <option value="stone">🪨 Stone</option>
+                <option value="blueprintKayu">📜 BP Kayu</option>
+                <option value="blueprintSilver">📜 BP Silver</option>
+                <option value="blueprintEmas">📜 BP Emas</option>
+                <option value="blueprintDiamond">💎 BP Diamond</option>
+                <option value="telurAyam">🐔 Telur Ayam</option>
+                <option value="telurBebek">🦆 Telur Bebek</option>
+                <option value="anakKambing">🐐 Anak Kambing</option>
+                <option value="anakSapi">🐄 Anak Sapi</option>
+            </select>
+            <input type="number" id="giftMaterialAmount" placeholder="Jumlah" min="1">
+            <button class="btn btn-green" onclick="giftMaterial()">Kirim Material / Hewan</button>
+        </div>
+
+        <div id="transferMessage" class="msg"></div>
+    </div>
+</div>
+
+<!-- ===== PAGE: MARKET ===== -->
+<div id="page-market" class="page">
+    <button class="btn-back" onclick="showPage('game')">⬅️ Kembali</button>
+    <h2>🏪 Market</h2>
+    <p style="color:#8899aa;margin-bottom:16px;">Jual atau beli material antar player.</p>
+    <div class="market-container">
+        <!-- Jual -->
+        <div class="market-sell">
+            <h3>📤 Jual Material</h3>
+            <div class="input-group">
+                <label>Material</label>
+                <select id="sellMaterialType">
+                    <option value="palu">🔨 Palu</option>
+                    <option value="stone">🪨 Stone</option>
+                    <option value="blueprintKayu">📜 BP Kayu</option>
+                    <option value="blueprintSilver">📜 BP Silver</option>
+                    <option value="blueprintEmas">📜 BP Emas</option>
+                    <option value="blueprintDiamond">💎 BP Diamond</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Jumlah</label>
+                <input type="number" id="sellAmount" placeholder="Jumlah" min="1">
+            </div>
+            <div class="input-group">
+                <label>Total Harga (Gold)</label>
+                <input type="number" id="sellPrice" placeholder="Total harga" min="1">
+            </div>
+            <button class="btn btn-gold" onclick="placeListing()">📤 Pasang Listing</button>
+            <div id="marketSellMessage" class="msg"></div>
+        </div>
+
+        <!-- Daftar Listing -->
+        <div class="market-listings">
+            <h3>📋 Daftar Listing</h3>
+            <div id="marketListingContainer" class="market-listing-list">
+                <p style="color:#8899aa;">Loading...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== PAGE: CHAT ===== -->
+<div id="page-chat" class="page">
+    <h2>💬 Chat</h2>
+    <div class="chat-tabs">
+        <button class="chat-tab active" onclick="switchChatTab('public')">🌍 Public</button>
+        <button class="chat-tab" onclick="switchChatTab('private')">💌 Private</button>
+    </div>
+    <!-- Public Chat -->
+    <div id="publicChat" class="chat-section active">
+        <div id="chatMessages" class="chat-messages"></div>
+        <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="Ketik pesan..." onkeypress="if(event.key==='Enter') sendMessage()">
+            <button onclick="sendMessage()">Kirim</button>
+        </div>
+    </div>
+    <!-- Private Chat -->
+    <div id="privateChat" class="chat-section">
+        <div id="privateChatList" class="private-chat-list">
+            <p style="color:#8899aa;text-align:center;">Pilih player dari chat public atau leaderboard untuk chat privat.</p>
+        </div>
+        <div id="privateChatBox" style="display:none;">
+            <div class="private-chat-header">
+                <span id="privateChatTarget">-</span>
+                <button class="btn-small" onclick="closePrivateChat()">✕</button>
+            </div>
+            <div id="privateMessages" class="chat-messages"></div>
+            <div class="chat-input">
+                <input type="text" id="privateChatInput" placeholder="Ketik pesan privat..." onkeypress="if(event.key==='Enter') sendPrivateMessage()">
+                <button onclick="sendPrivateMessage()">Kirim</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== PAGE: PROFILE ===== -->
+<div id="page-profile" class="page">
+    <h2>👤 Profile</h2>
+    <div class="profile-card">
+        <div class="profile-avatar">👤</div>
+        <div class="profile-info">
+            <h3 id="profileUsername">-</h3>
+            <p>Level: <span id="profileLevel">1</span></p>
+            <p>💰 Gold: <span id="profileGold">0</span></p>
+            <p>⛏️ Total Mined: <span id="profileTotalMined">0</span></p>
+            <div class="profile-desc">
+                <label>Deskripsi:</label>
+                <textarea id="profileDesc" rows="3" placeholder="Tulis deskripsi diri..."></textarea>
+                <button onclick="updateDescription()">Simpan</button>
+            </div>
+            <div style="margin-top:12px;">
+                <button class="btn btn-gold" onclick="changePassword()" style="width:auto;padding:8px 20px;">🔑 Ubah Password</button>
+            </div>
+            <div class="profile-inventory">
+                <h4>📦 Inventory</h4>
+                <div class="inventory-grid">
+                    <span>🔨 Palu: <span id="invPalu">0</span></span>
+                    <span>🪨 Stone: <span id="invStone">0</span></span>
+                    <span>📜 BP Kayu: <span id="invBPKayu">0</span></span>
+                    <span>📜 BP Silver: <span id="invBPSilver">0</span></span>
+                    <span>📜 BP Emas: <span id="invBPEmas">0</span></span>
+                    <span>📜 BP Diamond: <span id="invBPDiamond">0</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== PAGE: LEADERBOARD ===== -->
+<div id="page-leaderboard" class="page">
+    <h2>🏆 Leaderboard</h2>
+    <div class="leaderboard-tabs">
+        <button class="lb-tab active" onclick="loadLeaderboard('level')">Top Level</button>
+        <button class="lb-tab" onclick="loadLeaderboard('gold')">Top Gold</button>
+        <button class="lb-tab" onclick="loadLeaderboard('totalGoldMined')">Top Mined</button>
+    </div>
+    <div id="leaderboardList" class="leaderboard-list"></div>
+</div>
+
+            <!-- ===== PAGE: ADMIN ===== -->
+            <div id="page-admin" class="page admin-page">
+                <h2>🛡️ Admin Panel</h2>
+                <div class="admin-tabs">
+                    <button class="admin-tab active" onclick="switchAdminTab('players')">👥 Players</button>
+                    <button class="admin-tab" onclick="switchAdminTab('auction')">🔨 Lelang</button>
+                    <button class="admin-tab" onclick="switchAdminTab('notif')">📢 Notifikasi</button>
+                    <button class="admin-tab" onclick="switchAdminTab('plinko')">⚙️ Plinko</button>
+                    <button class="admin-tab" onclick="switchAdminTab('spin')">🎰 Spin</button>
+                    <button class="admin-tab" onclick="switchAdminTab('tax')">💰 Pajak Market</button>
+<!--box farm --></box>
+<button class="admin-tab" onclick="switchAdminTab('farm')">🌾 Farm</button>
+<!--box tab mineboom-->
+<button class="admin-tab" onclick="switchAdminTab('mineboom')">💣 MineBoom</button>
+<!--Box tab box misteri-->
+             <button class="admin-tab" onclick="switchAdminTab('box')">📦 Box</button>
+                <!-- TAB PLAYERS -->
+                <div id="adminTabPlayers" class="admin-tab-content active">
+                    <input type="text" id="adminSearchPlayer" placeholder="🔍 Cari username..." oninput="adminSearchPlayers()">
+                    <div id="adminPlayerList" class="admin-player-list"></div>
+                </div>
+
+                <!-- TAB AUCTION -->
+                <div id="adminTabAuction" class="admin-tab-content">
+                    <h3>Buat Lelang Baru</h3>
+                    <!-- (Konten lelang seperti sebelumnya) -->
+                    <div class="input-group"><label>Nama Item</label><input type="text" id="auctionItemNameInput" placeholder="Contoh: Blueprint Diamond"></div>
+                    <div class="input-group"><label>Deskripsi</label><input type="text" id="auctionDescInput" placeholder="Contoh: Langka!"></div>
+                    <div class="input-group"><label>Harga Awal</label><input type="number" id="auctionStartPrice" placeholder="1000000"></div>
+                    <div class="input-group"><label>Kelipatan Bid</label><input type="number" id="auctionMinBid" placeholder="10000"></div>
+                    <div class="input-group"><label>Durasi (detik)</label><input type="number" id="auctionDuration" placeholder="3600"></div>
+                    <div class="input-group"><label>Item</label>
+                        <select id="auctionItemType">
+                            <option value="palu">🔨 Palu</option>
+                            <option value="stone">🪨 Stone</option>
+                            <option value="blueprintKayu">📜 BP Kayu</option>
+                            <option value="blueprintSilver">📜 BP Silver</option>
+                            <option value="blueprintEmas">📜 BP Emas</option>
+                            <option value="blueprintDiamond">💎 BP Diamond</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-gold" onclick="createAuction()">🚀 Buat Lelang</button>
+                    <div id="adminAuctionMessage" class="msg"></div>
+                </div>
+
+                <!-- TAB NOTIF -->
+                <div id="adminTabNotif" class="admin-tab-content">
+                    <h3>Kirim Notifikasi Berjalan</h3>
+                    <div class="input-group"><label>Pesan</label><input type="text" id="notifMessageInput" placeholder="Event double reward!"></div>
+                    <button class="btn btn-gold" onclick="createNotification()">📢 Kirim</button>
+                    <button class="btn btn-red" onclick="clearNotification()" style="margin-top:8px;">🗑️ Hapus</button>
+                    <div id="adminNotifMessage" class="msg"></div>
+                </div>
+
+                <!-- TAB PLINKO -->
+                <div id="adminTabPlinko" class="admin-tab-content">
+                    <h3>⚙️ Pengaturan Plinko</h3>
+                    <p style="color:#8899aa;font-size:13px;">Pilih mode pergerakan bola.</p>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap; margin:12px 0;">
+                        <button onclick="setPlinkoMode('random')" style="flex:1; background:#2d7d46; color:#fff; padding:10px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">🎲 Random</button>
+                        <button onclick="setPlinkoMode('pinggir')" style="flex:1; background:#d9534f; color:#fff; padding:10px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">⬅️➡️ Bias Pinggir</button>
+                        <button onclick="setPlinkoMode('tengah')" style="flex:1; background:#f0ad4e; color:#000; padding:10px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">🎯 Bias Tengah</button>
+                    </div>
+                    <div id="plinkoModeStatus" style="color:#ccddee; font-size:14px; margin-top:8px;">Mode saat ini: <strong id="currentPlinkoMode">Random</strong></div>
+                    <div id="plinkoModeMessage" class="msg"></div>
+                </div>
+<!-- TAB MINEBOOM (ADMIN) -->
+<div id="adminTabMineBoom" class="admin-tab-content">
+    <h3>💣 Pengaturan MineBoom</h3>
+    <p style="color:#8899aa;font-size:13px;">Atur biaya masuk, jumlah bom, dan hadiah per ruangan.</p>
+    
+    <div class="farm-admin-table">
+        <div class="farm-admin-row header">
+            <span>Ruangan</span>
+            <span>Biaya (G)</span>
+            <span>Bom</span>
+            <span>Hadiah Min</span>
+            <span>Hadiah Max</span>
+        </div>
+        <div class="farm-admin-row" data-room="1">
+            <span>🟢 Room 1</span>
+            <span><input type="number" id="mineboomCost1" value="1000"></span>
+            <span><input type="number" id="mineboomBombs1" value="3"></span>
+            <span><input type="number" id="mineboomMin1" value="10"></span>
+            <span><input type="number" id="mineboomMax1" value="500"></span>
+        </div>
+        <div class="farm-admin-row" data-room="2">
+            <span>🟡 Room 2</span>
+            <span><input type="number" id="mineboomCost2" value="10000"></span>
+            <span><input type="number" id="mineboomBombs2" value="6"></span>
+            <span><input type="number" id="mineboomMin2" value="500"></span>
+            <span><input type="number" id="mineboomMax2" value="5000"></span>
+        </div>
+        <div class="farm-admin-row" data-room="3">
+            <span>🔴 Room 3</span>
+            <span><input type="number" id="mineboomCost3" value="100000"></span>
+            <span><input type="number" id="mineboomBombs3" value="9"></span>
+            <span><input type="number" id="mineboomMin3" value="5000"></span>
+            <span><input type="number" id="mineboomMax3" value="50000"></span>
+        </div>
+    </div>
+    
+    <button class="btn btn-gold" onclick="saveMineBoomSettings()" style="margin-top:16px;">💾 Simpan Pengaturan MineBoom</button>
+    <div id="mineboomAdminMessage" class="msg"></div>
+</div>
+
+
+ <!-- TAB FARM (ADMIN) -->
+<div id="adminTabFarm" class="admin-tab-content">
+    <h3>🌾 Pengaturan Peternakan</h3>
+    <p style="color:#8899aa;font-size:13px;">Atur harga kandang, parameter hewan, peluang box, dan distribusi hewan.</p>
+    
+    <!-- Harga Buka Kandang -->
+    <div class="admin-section">
+        <h4>🔓 Harga Buka Kandang</h4>
+        <div class="farm-admin-grid">
+            <div><label>Slot 1</label><input type="number" id="farmPriceSlot1" value="25000"></div>
+            <div><label>Slot 2</label><input type="number" id="farmPriceSlot2" value="75000"></div>
+            <div><label>Slot 3</label><input type="number" id="farmPriceSlot3" value="200000"></div>
+            <div><label>Slot 4</label><input type="number" id="farmPriceSlot4" value="500000"></div>
+            <div><label>Slot 5</label><input type="number" id="farmPriceSlot5" value="1000000"></div>
+            <div><label>Slot 6</label><input type="number" id="farmPriceSlot6" value="2000000"></div>
+        </div>
+    </div>
+    
+    <!-- Parameter Hewan -->
+    <div class="admin-section">
+        <h4>🐓 Parameter Hewan</h4>
+        <div class="farm-admin-table">
+            <div class="farm-admin-row header">
+                <span>Hewan</span>
+                <span>Pakan (G)</span>
+                <span>Waktu Panen (detik)</span>
+                <span>Hasil Panen (G)</span>
+                <span>Umur (detik)</span>
+                <span>Daging (G)</span>
+            </div>
+            <div class="farm-admin-row" data-hewan="ayam">
+                <span>🐔 Ayam</span>
+                <span><input type="number" id="farmPakanAyam" value="1000"></span>
+                <span><input type="number" id="farmWaktuAyam" value="14400"></span>
+                <span><input type="number" id="farmHasilAyam" value="2500"></span>
+                <span><input type="number" id="farmUmurAyam" value="604800"></span>
+                <span><input type="number" id="farmDagingAyam" value="500"></span>
+            </div>
+            <div class="farm-admin-row" data-hewan="bebek">
+                <span>🦆 Bebek</span>
+                <span><input type="number" id="farmPakanBebek" value="2000"></span>
+                <span><input type="number" id="farmWaktuBebek" value="21600"></span>
+                <span><input type="number" id="farmHasilBebek" value="5000"></span>
+                <span><input type="number" id="farmUmurBebek" value="777600"></span>
+                <span><input type="number" id="farmDagingBebek" value="1000"></span>
+            </div>
+            <div class="farm-admin-row" data-hewan="kambing">
+                <span>🐐 Kambing</span>
+                <span><input type="number" id="farmPakanKambing" value="5000"></span>
+                <span><input type="number" id="farmWaktuKambing" value="28800"></span>
+                <span><input type="number" id="farmHasilKambing" value="10000"></span>
+                <span><input type="number" id="farmUmurKambing" value="1036800"></span>
+                <span><input type="number" id="farmDagingKambing" value="2500"></span>
+            </div>
+            <div class="farm-admin-row" data-hewan="sapi">
+                <span>🐄 Sapi</span>
+                <span><input type="number" id="farmPakanSapi" value="10000"></span>
+                <span><input type="number" id="farmWaktuSapi" value="43200"></span>
+                <span><input type="number" id="farmHasilSapi" value="20000"></span>
+                <span><input type="number" id="farmUmurSapi" value="1382400"></span>
+                <span><input type="number" id="farmDagingSapi" value="5000"></span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Peluang Box -->
+    <div class="admin-section">
+        <h4>📦 Peluang Dapat Hewan dari Box</h4>
+        <div class="farm-admin-grid">
+            <div><label>Box Elit (%)</label><input type="number" id="farmBoxElit" value="5" min="0" max="100"></div>
+            <div><label>Box Master (%)</label><input type="number" id="farmBoxMaster" value="12" min="0" max="100"></div>
+            <div><label>Box Epic (%)</label><input type="number" id="farmBoxEpic" value="20" min="0" max="100"></div>
+        </div>
+    </div>
+    
+    <!-- Distribusi Hewan -->
+    <div class="admin-section">
+        <h4>📊 Distribusi Jenis Hewan</h4>
+        <p style="color:#8899aa;font-size:12px;">Persentase saat player berhasil dapat hewan (total harus 100%)</p>
+        <div class="farm-admin-grid">
+            <div><label>🐔 Ayam (%)</label><input type="number" id="farmDistAyam" value="45" min="0" max="100"></div>
+            <div><label>🦆 Bebek (%)</label><input type="number" id="farmDistBebek" value="30" min="0" max="100"></div>
+            <div><label>🐐 Kambing (%)</label><input type="number" id="farmDistKambing" value="15" min="0" max="100"></div>
+            <div><label>🐄 Sapi (%)</label><input type="number" id="farmDistSapi" value="10" min="0" max="100"></div>
+        </div>
+    </div>
+    
+    <button class="btn btn-gold" onclick="saveFarmSettings()" style="margin-top:16px;">💾 Simpan Semua Pengaturan</button>
+    <div id="farmAdminMessage" class="msg"></div>
+</div>
+<!-- TAB BOX -->
+<div id="adminTabBox" class="admin-tab-content">
+    <h3>📦 Pengaturan Box Misteri</h3>
+    <p style="color:#8899aa;font-size:13px;">Atur harga, isi material, dan deskripsi untuk setiap box.</p>
+    <p style="color:#8899aa;font-size:12px;">Gunakan <code>{harga}</code> di deskripsi untuk menampilkan harga otomatis.</p>
+    
+    <!-- ELIT -->
+    <div class="admin-section">
+        <h4>🟢 Box Elit</h4>
+        <div class="farm-admin-grid">
+            <div><label>Harga (G)</label><input type="number" id="boxPriceElit" value="100000"></div>
+            <div><label>Palu Min</label><input type="number" id="boxPaluMinElit" value="1"></div>
+            <div><label>Palu Max</label><input type="number" id="boxPaluMaxElit" value="5"></div>
+            <div><label>Stone Min</label><input type="number" id="boxStoneMinElit" value="1"></div>
+            <div><label>Stone Max</label><input type="number" id="boxStoneMaxElit" value="5"></div>
+            <div><label>BP Chance (%)</label><input type="number" id="boxBpChanceElit" value="5"></div>
+            <div><label>BP Type</label>
+                <select id="boxBpTypeElit">
+                    <option value="blueprintKayu">BP Kayu</option>
+                    <option value="blueprintSilver">BP Silver</option>
+                    <option value="blueprintEmas">BP Emas</option>
+                    <option value="blueprintDiamond">BP Diamond</option>
+                </select>
+            </div>
+        </div>
+        <div><label>Deskripsi</label>
+            <textarea id="boxDescElit" rows="2" style="width:100%;padding:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:8px;color:#fff;">Box pemula! Dapatkan material dasar dengan harga {harga} Gold.</textarea>
+        </div>
+    </div>
+
+    <!-- MASTER -->
+    <div class="admin-section">
+        <h4>🔵 Box Master</h4>
+        <div class="farm-admin-grid">
+            <div><label>Harga (G)</label><input type="number" id="boxPriceMaster" value="500000"></div>
+            <div><label>Palu Min</label><input type="number" id="boxPaluMinMaster" value="1"></div>
+            <div><label>Palu Max</label><input type="number" id="boxPaluMaxMaster" value="10"></div>
+            <div><label>Stone Min</label><input type="number" id="boxStoneMinMaster" value="1"></div>
+            <div><label>Stone Max</label><input type="number" id="boxStoneMaxMaster" value="10"></div>
+            <div><label>BP Chance (%)</label><input type="number" id="boxBpChanceMaster" value="3"></div>
+            <div><label>BP Type</label>
+                <select id="boxBpTypeMaster">
+                    <option value="blueprintKayu">BP Kayu</option>
+                    <option value="blueprintSilver" selected>BP Silver</option>
+                    <option value="blueprintEmas">BP Emas</option>
+                    <option value="blueprintDiamond">BP Diamond</option>
+                </select>
+            </div>
+        </div>
+        <div><label>Deskripsi</label>
+            <textarea id="boxDescMaster" rows="2" style="width:100%;padding:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:8px;color:#fff;">Box menengah! Dapatkan material lebih banyak dan BP Silver dengan harga {harga} Gold.</textarea>
+        </div>
+    </div>
+
+    <!-- EPIC -->
+    <div class="admin-section">
+        <h4>🟣 Box Epic</h4>
+        <div class="farm-admin-grid">
+            <div><label>Harga (G)</label><input type="number" id="boxPriceEpic" value="1000000"></div>
+            <div><label>Palu Min</label><input type="number" id="boxPaluMinEpic" value="1"></div>
+            <div><label>Palu Max</label><input type="number" id="boxPaluMaxEpic" value="15"></div>
+            <div><label>Stone Min</label><input type="number" id="boxStoneMinEpic" value="1"></div>
+            <div><label>Stone Max</label><input type="number" id="boxStoneMaxEpic" value="15"></div>
+            <div><label>BP Chance (%)</label><input type="number" id="boxBpChanceEpic" value="1"></div>
+            <div><label>BP Type</label>
+                <select id="boxBpTypeEpic">
+                    <option value="blueprintKayu">BP Kayu</option>
+                    <option value="blueprintSilver">BP Silver</option>
+                    <option value="blueprintEmas" selected>BP Emas</option>
+                    <option value="blueprintDiamond">BP Diamond</option>
+                </select>
+            </div>
+        </div>
+        <div><label>Deskripsi</label>
+            <textarea id="boxDescEpic" rows="2" style="width:100%;padding:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:8px;color:#fff;">Box Epic! Hadiah terbesar, peluang dapat BP Emas dengan harga {harga} Gold.</textarea>
+        </div>
+    </div>
+
+    <button class="btn btn-gold" onclick="saveBoxSettings()">💾 Simpan Pengaturan Box</button>
+    <div id="boxAdminMessage" class="msg"></div>
+</div>
+<!-- batas tab admin-->
+                <!-- TAB SPIN -->
+                <div id="adminTabSpin" class="admin-tab-content">
+                    <h3>🎰 Pengaturan Spin</h3>
+                    <p style="color:#8899aa;font-size:13px;">Atur peluang simbol jackpot.</p>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap; margin:12px 0;">
+                        <button onclick="setSpinMode('normal')" style="flex:1; background:#2d7d46; color:#fff; padding:10px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">🎲 Normal</button>
+                        <button onclick="setSpinMode('easy')" style="flex:1; background:#5bc0de; color:#000; padding:10px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">🍀 Easy</button>
+                        <button onclick="setSpinMode('hard')" style="flex:1; background:#d9534f; color:#fff; padding:10px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">💀 Hard</button>
+                    </div>
+                    <div id="spinModeStatus" style="color:#ccddee; font-size:14px; margin-top:8px;">Mode saat ini: <strong id="currentSpinMode">Normal</strong></div>
+                    <div id="spinModeMessage" class="msg"></div>
+                </div>
+
+                <!-- TAB PAJAK MARKET -->
+                <div id="adminTabTax" class="admin-tab-content">
+                    <h3>💰 Pajak Market</h3>
+                    <p style="color:#8899aa;font-size:13px;">Atur persentase pajak dari setiap transaksi jual beli di Market.</p>
+                    <div class="input-group">
+                        <label>Persentase Pajak (%)</label>
+                        <input type="number" id="taxPercentInput" min="0" max="50" value="5" step="0.5">
+                        <span style="color:#8899aa;font-size:12px;">Saat ini: <span id="currentTaxDisplay">5</span>%</span>
+                    </div>
+                    <button class="btn btn-gold" onclick="saveTaxSetting()">💾 Simpan Pajak</button>
+                    <div id="taxMessage" class="msg"></div>
+                </div>
+
+            </div>
+
+        </div> <!-- end .content -->
+    </div> <!-- end #app -->
+
+     <script src="js/farm.js"></script>
+    <script src="js/script.js"></script>
+    
+</body>
+</html>

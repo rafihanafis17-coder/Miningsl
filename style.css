@@ -1,0 +1,2068 @@
+/* ============================================================
+   BAGIAN 1: GLOBAL RESET + LOGIN + DASHBOARD + NAVBAR + GAME GRID
+   ============================================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #0a0e17;
+    color: #fff;
+    min-height: 100vh;
+}
+
+button {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* ============================================================
+   LOGIN PAGE
+   ============================================================ */
+#loginPage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    background: linear-gradient(135deg, #0a0e17, #1a1f2e);
+}
+
+.auth-box {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 40px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+    max-width: 420px;
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 30px;
+}
+.logo h1 {
+    color: #f0b400;
+    font-size: 32px;
+}
+.logo p {
+    color: #8899aa;
+    font-size: 14px;
+}
+
+.tab-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+.tab-row button {
+    flex: 1;
+    padding: 12px;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    color: #8899aa;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+}
+.tab-row button.active {
+    background: #f0b400;
+    color: #0a0e17;
+    border-color: #f0b400;
+}
+
+.form {
+    display: none;
+}
+.form.active {
+    display: block;
+}
+
+.input-group {
+    margin-bottom: 18px;
+    position: relative;
+}
+.input-group label {
+    display: block;
+    color: #ccddee;
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+.input-group input,
+.input-group select {
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: #fff;
+    font-size: 15px;
+}
+.input-group input:focus,
+.input-group select:focus {
+    outline: none;
+    border-color: #f0b400;
+}
+.input-group select option {
+    background: #1a1f2e;
+}
+.input-group span {
+    position: absolute;
+    right: 16px;
+    top: 70%;
+    transform: translateY(-50%);
+    color: #8899aa;
+}
+
+.btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 5px;
+}
+.btn-gold {
+    background: #f0b400;
+    color: #0a0e17;
+}
+.btn-gold:hover {
+    background: #d49c00;
+}
+.btn-green {
+    background: #2d7d46;
+    color: #fff;
+}
+.btn-green:hover {
+    background: #236635;
+}
+.btn-red {
+    background: #ff4444;
+    color: #fff;
+}
+.btn-small {
+    padding: 8px 16px;
+    background: #f0b400;
+    border: none;
+    border-radius: 6px;
+    color: #0a0e17;
+    font-weight: bold;
+    margin-top: 6px;
+}
+.btn-small:hover {
+    background: #d49c00;
+}
+
+.msg {
+    text-align: center;
+    margin-top: 12px;
+    min-height: 24px;
+    font-size: 14px;
+}
+.msg.error {
+    color: #ff4444;
+}
+.msg.success {
+    color: #44ff88;
+}
+
+/* ============================================================
+   DASHBOARD / NAVBAR
+   ============================================================ */
+#app {
+    display: none;
+    min-height: 100vh;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: rgba(10, 14, 23, 0.95);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.nav-brand {
+    font-size: 18px;
+    font-weight: bold;
+    color: #f0b400;
+}
+.nav-gold {
+    font-size: 16px;
+    color: #ffd700;
+    font-weight: bold;
+    background: rgba(255, 215, 0, 0.1);
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+.nav-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.nav-user span {
+    color: #ccddee;
+    font-size: 14px;
+}
+.btn-logout {
+    background: rgba(255, 68, 68, 0.2);
+    border: 1px solid rgba(255, 68, 68, 0.3);
+    color: #ff4444;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+.btn-logout:hover {
+    background: rgba(255, 68, 68, 0.3);
+}
+
+.sidebar {
+    display: flex;
+    overflow-x: auto;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 8px 4px;
+    gap: 4px;
+}
+.menu-item {
+    padding: 10px 16px;
+    color: #8899aa;
+    cursor: pointer;
+    font-size: 14px;
+    white-space: nowrap;
+    border-radius: 8px;
+    font-weight: 500;
+}
+.menu-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+}
+.menu-item.active {
+    background: rgba(240, 180, 0, 0.15);
+    color: #f0b400;
+}
+.menu-item.admin-only {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 10px;
+    padding-top: 15px;
+    color: #ff6b35;
+}
+
+.content {
+    padding: 16px;
+    padding-bottom: 80px;
+}
+.page {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+.page.active {
+    display: block;
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.page h2 {
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+.btn-back {
+    background: rgba(240, 180, 0, 0.2);
+    border: 1px solid rgba(240, 180, 0, 0.3);
+    color: #f0b400;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 12px;
+}
+.btn-back:hover {
+    background: rgba(240, 180, 0, 0.3);
+}
+
+/* ============================================================
+   GAME GRID (HALAMAN GAME)
+   ============================================================ */
+.games-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+}
+.game-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 24px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.game-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(240, 180, 0, 0.3);
+}
+.game-card:active {
+    transform: scale(0.95);
+}
+.game-icon {
+    font-size: 48px;
+}
+.game-card h3 {
+    font-size: 16px;
+    margin: 8px 0 4px;
+}
+.game-card p {
+    color: #8899aa;
+    font-size: 13px;
+}
+.btn-play {
+    margin-top: 12px;
+    padding: 8px 24px;
+    background: linear-gradient(135deg, #f0b400, #d49c00);
+    border: none;
+    border-radius: 8px;
+    color: #0a0e17;
+    font-weight: bold;
+    font-size: 14px;
+}
+.btn-play:hover {
+    transform: scale(1.05);
+}
+
+/* ============================================================
+   BAGIAN 2: MINING + SPIN + AUTO SPIN + PLINKO
+   ============================================================ */
+
+/* ============================================================
+   MINING (TAMBANG)
+   ============================================================ */
+.mines-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+.mine-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 14px 12px;
+    text-align: center;
+}
+.mine-icon {
+    font-size: 32px;
+}
+.mine-card h3 {
+    font-size: 14px;
+    margin: 4px 0;
+}
+.mine-card .mine-level {
+    color: #8899aa;
+    font-size: 12px;
+}
+.mine-card .mine-reward {
+    color: #ffd700;
+    font-size: 13px;
+    font-weight: bold;
+}
+.mine-timer {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 6px;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #ccddee;
+    margin: 6px 0;
+}
+.mine-claim {
+    background: rgba(68, 255, 136, 0.05);
+    padding: 6px;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #44ff88;
+    min-height: 28px;
+}
+.btn-mine {
+    width: 100%;
+    padding: 8px;
+    background: #f0b400;
+    border: none;
+    border-radius: 6px;
+    color: #0a0e17;
+    font-weight: bold;
+    font-size: 12px;
+    margin-top: 6px;
+}
+.btn-mine:disabled {
+    background: #444;
+    color: #888;
+    cursor: not-allowed;
+}
+.btn-mine:hover:not(:disabled) {
+    transform: scale(1.02);
+}
+.btn-upgrade {
+    width: 100%;
+    padding: 6px;
+    background: #2d7d46;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 11px;
+    margin-top: 4px;
+}
+.btn-upgrade:hover {
+    background: #236635;
+}
+.mine-result {
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 10px;
+    text-align: center;
+    min-height: 40px;
+}
+.result-success {
+    background: rgba(68, 255, 136, 0.1);
+    border: 1px solid rgba(68, 255, 136, 0.3);
+    color: #44ff88;
+    padding: 12px;
+    border-radius: 10px;
+}
+.result-error {
+    background: rgba(255, 68, 68, 0.1);
+    border: 1px solid rgba(255, 68, 68, 0.3);
+    color: #ff4444;
+    padding: 12px;
+    border-radius: 10px;
+}
+
+/* ============================================================
+   SPIN SLOT
+   ============================================================ */
+.spin-container {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 16px;
+    padding: 30px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.slot-reels {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px 0;
+}
+.reel {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+.reel.spinning {
+    animation: spinReel 0.1s ease-in-out infinite;
+}
+@keyframes spinReel {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.spin-controls {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 16px 0;
+}
+.spin-controls label {
+    color: #ccddee;
+    font-size: 14px;
+}
+.spin-controls input {
+    padding: 10px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    width: 100px;
+}
+.spin-controls input:focus {
+    outline: none;
+    border-color: #f0b400;
+}
+.btn-spin {
+    padding: 10px 30px;
+    background: linear-gradient(135deg, #f0b400, #d49c00);
+    border: none;
+    border-radius: 8px;
+    color: #0a0e17;
+    font-weight: bold;
+    font-size: 16px;
+}
+.btn-spin:hover {
+    transform: scale(1.05);
+}
+.btn-spin:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.spin-result {
+    margin-top: 16px;
+    font-size: 18px;
+    min-height: 40px;
+}
+.spin-result.win {
+    color: #44ff88;
+}
+.spin-result.lose {
+    color: #ff4444;
+}
+.spin-result.jackpot {
+    color: #ffd700;
+    font-size: 24px;
+    animation: pulse 0.5s ease-in-out infinite alternate;
+}
+@keyframes pulse {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.05);
+    }
+}
+
+/* ============================================================
+   AUTO SPIN
+   ============================================================ */
+.auto-spin-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 12px 0;
+}
+.auto-spin-controls label {
+    color: #ccddee;
+    font-size: 14px;
+}
+.auto-spin-controls select {
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+}
+.auto-spin-controls select:focus {
+    outline: none;
+    border-color: #f0b400;
+}
+.btn-auto {
+    padding: 8px 20px;
+    background: #2d7d46;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 14px;
+}
+.btn-auto:hover {
+    background: #236635;
+}
+.btn-auto-stop {
+    padding: 8px 20px;
+    background: #ff4444;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 14px;
+}
+.btn-auto-stop:hover {
+    background: #cc0000;
+}
+
+/* ============================================================
+   PLINKO
+   ============================================================ */
+.plinko-container {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 16px;
+    padding: 12px 8px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.plinko-board {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+    min-width: 360px;
+    padding: 0 4px;
+}
+.plinko-row {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin: 2px 0;
+    flex-wrap: nowrap;
+}
+.plinko-peg {
+    width: 14px;
+    height: 14px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transition: all 0.3s;
+    flex-shrink: 0;
+}
+.plinko-peg.active {
+    background: #f0b400;
+    transform: scale(1.5);
+}
+.plinko-slots {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-top: 12px;
+    width: 100%;
+    flex-wrap: nowrap;
+    padding: 0 2px;
+}
+.plinko-slot {
+    flex: 0 0 auto;
+    min-width: 36px;
+    max-width: 54px;
+    padding: 6px 2px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    text-align: center;
+    font-size: 10px;
+    font-weight: bold;
+    color: #8899aa;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s;
+}
+.plinko-slot.highlight {
+    background: #f0b400;
+    color: #0a0e17;
+    border-color: #f0b400;
+    transform: scale(1.05);
+}
+.plinko-slot .slot-value {
+    font-size: 14px;
+}
+.plinko-slot .slot-label {
+    font-size: 8px;
+    color: #667;
+}
+.plinko-controls {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}
+.plinko-controls select {
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+}
+.btn-plinko {
+    padding: 10px 24px;
+    background: linear-gradient(135deg, #f0b400, #d49c00);
+    border: none;
+    border-radius: 8px;
+    color: #0a0e17;
+    font-weight: bold;
+    font-size: 14px;
+}
+.btn-plinko:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.plinko-result {
+    font-size: 18px;
+    font-weight: bold;
+    margin-left: 12px;
+    min-width: 80px;
+}
+
+/* ============================================================
+   BAGIAN 3: MINEBOOM + PVP + LUCKY DICE + AUCTION + BOX + TRANSFER
+   ============================================================ */
+
+/* ============================================================
+   MINEBOOM
+   ============================================================ */
+.mineboom-rooms {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+.room-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s;
+}
+.room-card:hover {
+    border-color: #f0b400;
+    transform: translateY(-3px);
+}
+.room-card h3 {
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+.room-card p {
+    color: #8899aa;
+    font-size: 14px;
+    margin: 4px 0;
+}
+.btn-room {
+    margin-top: 12px;
+    padding: 8px 24px;
+    background: #f0b400;
+    border: none;
+    border-radius: 8px;
+    color: #0a0e17;
+    font-weight: bold;
+    font-size: 14px;
+}
+.btn-room:hover {
+    background: #d49c00;
+}
+
+.mineboom-board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    max-width: 400px;
+    margin: 16px auto;
+}
+.mineboom-cell {
+    aspect-ratio: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: bold;
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.mineboom-cell:hover:not(.revealed):not(.boom) {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
+}
+.mineboom-cell.revealed {
+    cursor: default;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+.mineboom-cell.boom {
+    background: rgba(255, 68, 68, 0.3);
+    border-color: #ff4444;
+}
+.mineboom-cell.hidden {
+    background: rgba(255, 255, 255, 0.02);
+}
+.mineboom-cell .reward {
+    color: #44ff88;
+}
+.mineboom-controls {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+.mineboom-result {
+    margin-top: 12px;
+    font-size: 16px;
+    color: #ccddee;
+    min-height: 30px;
+}
+.btn-cashout {
+    padding: 10px 24px;
+    background: #f0b400;
+    border: none;
+    border-radius: 8px;
+    color: #0a0e17;
+    font-weight: bold;
+    font-size: 14px;
+}
+.btn-cashout:hover {
+    background: #d49c00;
+}
+.btn-mineboom {
+    padding: 10px 24px;
+    background: #2d7d46;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 14px;
+}
+.btn-mineboom:hover {
+    background: #236635;
+}
+
+/* ============================================================
+   PVP
+   ============================================================ */
+.pvp-rooms {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+.pvp-room-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s;
+}
+.pvp-room-card:hover {
+    border-color: #f0b400;
+    transform: translateY(-3px);
+}
+.pvp-room-card h3 {
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+.pvp-room-card p {
+    color: #8899aa;
+    font-size: 14px;
+    margin: 4px 0;
+}
+
+.pvp-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.pvp-stat {
+    text-align: center;
+    color: #8899aa;
+    font-size: 14px;
+}
+.pvp-stat span:last-child {
+    color: #fff;
+    font-weight: bold;
+    font-size: 16px;
+    display: block;
+    margin-top: 4px;
+}
+.pvp-last-winner {
+    display: flex;
+    justify-content: space-between;
+    background: rgba(240, 180, 0, 0.05);
+    border-radius: 10px;
+    padding: 10px 16px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(240, 180, 0, 0.2);
+    color: #ccddee;
+}
+.pvp-last-winner span:first-child {
+    color: #f0b400;
+}
+.pvp-bet-area {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+.pvp-bet-area label {
+    color: #ccddee;
+}
+.pvp-bet-area input {
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+    width: 160px;
+}
+.pvp-bet-area input:focus {
+    outline: none;
+    border-color: #f0b400;
+}
+.btn-pvp-bet {
+    padding: 10px 24px;
+    background: #2d7d46;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 14px;
+}
+.btn-pvp-bet:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.btn-pvp-bet:hover:not(:disabled) {
+    background: #236635;
+}
+.pvp-message {
+    color: #ff4444;
+    font-size: 14px;
+    min-height: 24px;
+}
+.pvp-result {
+    margin-top: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #44ff88;
+    min-height: 30px;
+}
+
+/* ============================================================
+   LUCKY DICE
+   ============================================================ */
+.dice-container {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.dice-display {
+    font-size: 80px;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dice-animation {
+    transition: all 0.3s;
+}
+.dice-animation.rolling {
+    animation: diceRoll 0.5s ease-in-out;
+}
+@keyframes diceRoll {
+    0% {
+        transform: rotate(0deg) scale(1);
+    }
+    25% {
+        transform: rotate(90deg) scale(1.2);
+    }
+    50% {
+        transform: rotate(180deg) scale(1);
+    }
+    75% {
+        transform: rotate(270deg) scale(1.2);
+    }
+    100% {
+        transform: rotate(360deg) scale(1);
+    }
+}
+.dice-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    margin-top: 12px;
+}
+.dice-controls input {
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+    width: 120px;
+}
+.dice-buttons {
+    display: flex;
+    gap: 12px;
+}
+.btn-dice-odd {
+    padding: 12px 30px;
+    background: #ff4444;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 16px;
+}
+.btn-dice-odd:hover {
+    background: #cc0000;
+}
+.btn-dice-even {
+    padding: 12px 30px;
+    background: #2d7d46;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 16px;
+}
+.btn-dice-even:hover {
+    background: #236635;
+}
+.dice-message {
+    font-size: 18px;
+    font-weight: bold;
+    min-height: 30px;
+}
+.dice-stats {
+    display: flex;
+    gap: 20px;
+    color: #8899aa;
+    font-size: 14px;
+}
+.dice-stats span {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 4px 12px;
+    border-radius: 6px;
+}
+
+/* ============================================================
+   AUCTION (LELANG)
+   ============================================================ */
+.auction-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+.auction-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.auction-item:hover {
+    border-color: #f0b400;
+    background: rgba(255, 255, 255, 0.05);
+}
+.auction-item .ai-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.auction-item .ai-name {
+    color: #f0b400;
+    font-weight: bold;
+    font-size: 16px;
+}
+.auction-item .ai-price {
+    color: #ffd700;
+}
+.auction-item .ai-status {
+    font-size: 12px;
+    padding: 2px 10px;
+    border-radius: 10px;
+}
+.auction-item .ai-status.active {
+    background: rgba(68, 255, 136, 0.2);
+    color: #44ff88;
+}
+.auction-item .ai-status.ended {
+    background: rgba(255, 68, 68, 0.2);
+    color: #ff4444;
+}
+.auction-item .ai-desc {
+    color: #8899aa;
+    font-size: 13px;
+    margin: 4px 0;
+}
+.auction-bid-area {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+.auction-bid-area input {
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+    width: 160px;
+}
+.auction-bid-area input:focus {
+    outline: none;
+    border-color: #f0b400;
+}
+.btn-auction-bid {
+    padding: 10px 24px;
+    background: #f0b400;
+    border: none;
+    border-radius: 8px;
+    color: #0a0e17;
+    font-weight: bold;
+    font-size: 14px;
+}
+.auction-message {
+    color: #ff4444;
+    font-size: 14px;
+    min-height: 24px;
+}
+
+/* ============================================================
+   BOX MYSTERI
+   ============================================================ */
+.box-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+}
+.box-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 20px 16px;
+    text-align: center;
+    transition: all 0.3s;
+}
+.box-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(240, 180, 0, 0.3);
+}
+.box-icon {
+    font-size: 48px;
+}
+.box-card h3 {
+    font-size: 16px;
+    margin: 8px 0 4px;
+}
+.box-card p {
+    color: #8899aa;
+    font-size: 14px;
+}
+.btn-buy {
+    margin-top: 12px;
+    padding: 8px 24px;
+    background: #f0b400;
+    border: none;
+    border-radius: 8px;
+    color: #0a0e17;
+    font-weight: bold;
+    font-size: 14px;
+}
+.btn-buy:hover {
+    background: #d49c00;
+}
+.box-result {
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 10px;
+    text-align: center;
+    min-height: 40px;
+}
+
+/* ============================================================
+   TRANSFER
+   ============================================================ */
+.transfer-container {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.transfer-container .input-group {
+    margin-bottom: 12px;
+}
+
+/* ============================================================
+   BAGIAN 4: MARKET + CHAT + PROFILE + LEADERBOARD + ADMIN + RESPONSIVE
+   ============================================================ */
+
+/* ============================================================
+   MARKET
+   ============================================================ */
+.market-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+}
+.market-sell {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.market-sell h3 {
+    margin-bottom: 12px;
+    color: #ccddee;
+}
+.market-listings {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.market-listings h3 {
+    margin-bottom: 12px;
+    color: #ccddee;
+}
+.market-listing-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+.market-listing-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+    margin-bottom: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.market-listing-item .ml-material {
+    font-weight: bold;
+    color: #fff;
+}
+.market-listing-item .ml-amount {
+    color: #ccddee;
+}
+.market-listing-item .ml-price {
+    color: #ffd700;
+    font-weight: bold;
+}
+.market-listing-item .ml-seller {
+    color: #8899aa;
+    font-size: 12px;
+}
+.btn-buy-listing {
+    padding: 4px 16px;
+    background: #2d7d46;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 13px;
+}
+.btn-buy-listing:hover {
+    background: #236635;
+}
+
+/* ============================================================
+   CHAT
+   ============================================================ */
+.chat-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.chat-tab {
+    padding: 8px 16px;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    color: #8899aa;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+}
+.chat-tab.active {
+    background: #f0b400;
+    color: #0a0e17;
+    border-color: #f0b400;
+}
+.chat-section {
+    display: none;
+}
+.chat-section.active {
+    display: block;
+}
+
+.chat-messages {
+    height: 350px;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.chat-message {
+    padding: 6px 10px;
+    margin-bottom: 4px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 13px;
+}
+.chat-message strong {
+    color: #f0b400;
+    cursor: pointer;
+}
+.chat-message strong:hover {
+    text-decoration: underline;
+}
+.chat-message span {
+    color: #ccddee;
+    word-break: break-word;
+    flex: 1;
+}
+.chat-message small {
+    color: #667;
+    font-size: 10px;
+}
+
+.chat-input {
+    display: flex;
+    gap: 8px;
+}
+.chat-input input {
+    flex: 1;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+}
+.chat-input input:focus {
+    outline: none;
+    border-color: #f0b400;
+}
+.chat-input button {
+    padding: 10px 18px;
+    background: #f0b400;
+    border: none;
+    border-radius: 8px;
+    color: #0a0e17;
+    font-weight: bold;
+    font-size: 14px;
+}
+.chat-input button:hover {
+    background: #d49c00;
+}
+
+/* ============================================================
+   PRIVATE CHAT
+   ============================================================ */
+.private-chat-list {
+    max-height: 300px;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 10px;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.private-chat-item {
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 6px;
+    margin-bottom: 4px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.private-chat-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+.private-chat-item .pc-name {
+    color: #fff;
+}
+.private-chat-item .pc-unread {
+    background: #ff4444;
+    color: #fff;
+    border-radius: 50%;
+    padding: 2px 8px;
+    font-size: 11px;
+}
+.private-chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px 8px 0 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.private-chat-header span {
+    color: #f0b400;
+    font-weight: bold;
+}
+.private-chat-header button {
+    background: transparent;
+    border: none;
+    color: #8899aa;
+    font-size: 18px;
+}
+
+/* ============================================================
+   PROFILE
+   ============================================================ */
+.profile-card {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.profile-avatar {
+    font-size: 60px;
+    text-align: center;
+}
+.profile-info h3 {
+    text-align: center;
+    font-size: 20px;
+    margin: 8px 0;
+}
+.profile-info p {
+    color: #8899aa;
+    font-size: 13px;
+    padding: 3px 0;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+.profile-info p span {
+    color: #fff;
+    font-weight: 500;
+}
+.profile-desc {
+    margin-top: 12px;
+}
+.profile-desc label {
+    display: block;
+    color: #ccddee;
+    font-size: 13px;
+    margin-bottom: 4px;
+}
+.profile-desc textarea {
+    width: 100%;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: #fff;
+    resize: vertical;
+    font-family: inherit;
+    font-size: 13px;
+    min-height: 60px;
+}
+.profile-desc textarea:focus {
+    outline: none;
+    border-color: #f0b400;
+}
+.profile-desc button {
+    width: 100%;
+    margin-top: 8px;
+    padding: 8px;
+    background: #f0b400;
+    border: none;
+    border-radius: 6px;
+    color: #0a0e17;
+    font-weight: bold;
+    font-size: 14px;
+}
+.profile-desc button:hover {
+    background: #d49c00;
+}
+.profile-inventory {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+.profile-inventory h4 {
+    color: #ccddee;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+.inventory-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+}
+.inventory-grid span {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 4px 8px;
+    border-radius: 6px;
+    color: #ccddee;
+    font-size: 12px;
+    text-align: center;
+}
+.inventory-grid span span {
+    color: #fff;
+    font-weight: bold;
+    background: none;
+    padding: 0;
+}
+
+/* ============================================================
+   LEADERBOARD
+   ============================================================ */
+.leaderboard-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+.lb-tab {
+    padding: 8px 20px;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    color: #8899aa;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+}
+.lb-tab.active {
+    background: #f0b400;
+    color: #0a0e17;
+    border-color: #f0b400;
+}
+.lb-tab:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+}
+.leaderboard-list {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.lb-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+.lb-item:last-child {
+    border-bottom: none;
+}
+.lb-item .rank {
+    color: #f0b400;
+    font-weight: bold;
+    width: 40px;
+}
+.lb-item .name {
+    color: #fff;
+    flex: 1;
+}
+.lb-item .value {
+    color: #ffd700;
+    font-weight: bold;
+}
+.lb-item .clickable {
+    cursor: pointer;
+    color: #f0b400;
+}
+.lb-item .clickable:hover {
+    text-decoration: underline;
+}
+
+/* ============================================================
+   ADMIN PANEL
+   ============================================================ */
+.admin-page {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 16px;
+    padding: 16px;
+}
+.admin-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+.admin-tab {
+    padding: 8px 16px;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    color: #8899aa;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+}
+.admin-tab.active {
+    background: #f0b400;
+    color: #0a0e17;
+    border-color: #f0b400;
+}
+.admin-tab-content {
+    display: none;
+}
+.admin-tab-content.active {
+    display: block;
+}
+.admin-player-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+.admin-player-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+    margin-bottom: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    flex-wrap: wrap;
+    gap: 4px;
+    font-size: 13px;
+}
+.admin-player-item .ap-name {
+    color: #fff;
+    flex: 1;
+}
+.admin-player-item .ap-gold {
+    color: #ffd700;
+}
+.admin-player-item .ap-actions {
+    display: flex;
+    gap: 4px;
+}
+.admin-player-item .ap-actions button {
+    padding: 2px 8px;
+    border: none;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+}
+.btn-admin-add {
+    background: #44ff88;
+    color: #000;
+}
+.btn-admin-remove {
+    background: #ff4444;
+    color: #fff;
+}
+.btn-admin-ban {
+    background: #ff8800;
+    color: #fff;
+}
+.btn-admin-unban {
+    background: #44ff88;
+    color: #000;
+}
+
+/* ============================================================
+   PLINKO MODE BUTTONS (Admin Panel)
+   ============================================================ */
+.plinko-mode-selector .btn-mode {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.plinko-mode-selector .btn-mode:hover {
+    transform: scale(1.02);
+}
+
+/* ============================================================
+   RESPONSIVE (HP)
+   ============================================================ */
+@media (max-width: 768px) {
+    .games-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    .box-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    .mineboom-rooms {
+        grid-template-columns: 1fr 1fr;
+    }
+    .pvp-rooms {
+        grid-template-columns: 1fr 1fr;
+    }
+    .pvp-info {
+        grid-template-columns: 1fr 1fr;
+    }
+    .market-container {
+        grid-template-columns: 1fr;
+    }
+    .admin-tabs {
+        gap: 4px;
+    }
+    .admin-tab {
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .games-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    .box-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    .mines-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    .inventory-grid {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    .reel {
+        width: 60px;
+        height: 60px;
+        font-size: 30px;
+    }
+    .slot-reels {
+        gap: 12px;
+    }
+    .auth-box {
+        padding: 24px;
+    }
+    .plinko-board {
+        min-width: 300px;
+    }
+    .plinko-row {
+        gap: 4px;
+    }
+    .plinko-peg {
+        width: 10px !important;
+        height: 10px !important;
+    }
+    .plinko-slots {
+        gap: 2px;
+    }
+    .plinko-slot {
+        min-width: 26px;
+        max-width: 38px;
+        padding: 4px 1px;
+        font-size: 8px;
+    }
+    .plinko-slot .slot-value {
+        font-size: 10px;
+    }
+    .plinko-slot .slot-label {
+        font-size: 6px;
+    }
+    .market-listing-item {
+        font-size: 12px;
+        padding: 8px;
+    }
+    .admin-player-item {
+        font-size: 11px;
+        padding: 6px 8px;
+    }
+    .admin-player-item .ap-actions button {
+        font-size: 9px;
+        padding: 2px 6px;
+    }
+    .pvp-info {
+        grid-template-columns: 1fr 1fr;
+    }
+    .mineboom-rooms {
+        grid-template-columns: 1fr;
+    }
+    .pvp-rooms {
+        grid-template-columns: 1fr;
+    }
+    .chat-messages {
+        height: 250px;
+    }
+}
+/* ============================================================
+   FARM / PETERNAKAN
+   ============================================================ */
+.farm-inventory {
+    background: rgba(255,255,255,0.03);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+.farm-inventory h4 {
+    color: #ccddee;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+.farm-inventory-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 8px;
+}
+.farm-inventory-grid span {
+    background: rgba(255,255,255,0.03);
+    padding: 4px 8px;
+    border-radius: 6px;
+    color: #ccddee;
+    font-size: 13px;
+    text-align: center;
+}
+.farm-inventory-grid span span {
+    color: #fff;
+    font-weight: bold;
+    background: none;
+    padding: 0;
+}
+
+/* Farm Slots */
+.farm-slots {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-top: 8px;
+}
+.farm-slot {
+    background: rgba(255,255,255,0.03);
+    border: 2px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 14px 12px;
+    text-align: center;
+    transition: all 0.3s;
+}
+.farm-slot.locked {
+    border-color: rgba(255,68,68,0.3);
+    background: rgba(255,68,68,0.05);
+}
+.farm-slot.unlocked {
+    border-color: rgba(68,255,136,0.2);
+}
+.farm-slot .slot-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #8899aa;
+}
+.farm-slot .slot-icon {
+    font-size: 32px;
+    margin: 4px 0;
+}
+.farm-slot .slot-name {
+    font-weight: bold;
+    color: #fff;
+    font-size: 14px;
+}
+.farm-slot .slot-status {
+    font-size: 12px;
+    padding: 2px 10px;
+    border-radius: 10px;
+    display: inline-block;
+}
+.farm-slot .slot-status.empty { background: rgba(255,255,255,0.05); color: #8899aa; }
+.farm-slot .slot-status.active { background: rgba(68,255,136,0.2); color: #44ff88; }
+.farm-slot .slot-status.ready { background: rgba(255,215,0,0.2); color: #ffd700; }
+.farm-slot .slot-status.dead { background: rgba(255,68,68,0.2); color: #ff4444; }
+.farm-slot .slot-timer {
+    font-size: 13px;
+    color: #ccddee;
+    margin: 4px 0;
+}
+.farm-slot .slot-reward {
+    font-size: 13px;
+    color: #ffd700;
+}
+.farm-slot .slot-actions {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+.farm-slot .slot-actions button {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.farm-slot .slot-actions button:hover {
+    transform: scale(1.03);
+}
+.btn-farm-unlock {
+    background: #f0b400;
+    color: #0a0e17;
+}
+.btn-farm-place {
+    background: #2d7d46;
+    color: #fff;
+}
+.btn-farm-feed {
+    background: #f0b400;
+    color: #0a0e17;
+}
+.btn-farm-harvest {
+    background: #44ff88;
+    color: #0a0e17;
+}
+.btn-farm-clean {
+    background: #ff4444;
+    color: #fff;
+}
+.btn-farm-pick {
+    background: #5bc0de;
+    color: #000;
+}
+.farm-result {
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 10px;
+    text-align: center;
+    min-height: 40px;
+}
+
+/* Farm Admin */
+.farm-admin-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin: 8px 0;
+}
+.farm-admin-grid div label {
+    display: block;
+    color: #ccddee;
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+.farm-admin-grid div input {
+    width: 100%;
+    padding: 6px 10px;
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    color: #fff;
+    font-size: 14px;
+}
+.farm-admin-grid div input:focus {
+    outline: none;
+    border-color: #f0b400;
+}
+.farm-admin-table {
+    width: 100%;
+    overflow-x: auto;
+    margin: 8px 0;
+}
+.farm-admin-row {
+    display: grid;
+    grid-template-columns: 80px 1fr 1fr 1fr 1fr 1fr;
+    gap: 6px;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    align-items: center;
+}
+.farm-admin-row.header {
+    color: #8899aa;
+    font-size: 11px;
+    font-weight: bold;
+    border-bottom: 2px solid rgba(255,255,255,0.05);
+    padding-bottom: 8px;
+}
+.farm-admin-row span {
+    color: #ccddee;
+    font-size: 13px;
+}
+.farm-admin-row input {
+    width: 100%;
+    padding: 4px 6px;
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(255,255,255,0.08);
+    border-radius: 4px;
+    color: #fff;
+    font-size: 13px;
+}
+.farm-admin-row input:focus {
+    outline: none;
+    border-color: #f0b400;
+}
+.admin-section {
+    margin: 16px 0;
+    padding: 12px;
+    background: rgba(255,255,255,0.02);
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.03);
+}
+.admin-section h4 {
+    color: #ccddee;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+/* Responsive Farm */
+@media (max-width: 768px) {
+    .farm-slots {
+        grid-template-columns: 1fr 1fr;
+    }
+    .farm-admin-row {
+        grid-template-columns: 60px 1fr 1fr 1fr 1fr 1fr;
+        font-size: 11px;
+    }
+    .farm-admin-row input {
+        font-size: 11px;
+        padding: 2px 4px;
+    }
+    .farm-inventory-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    .farm-admin-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+@media (max-width: 480px) {
+    .farm-slots {
+        grid-template-columns: 1fr 1fr;
+    }
+    .farm-admin-row {
+        grid-template-columns: 50px 1fr 1fr 1fr 1fr 1fr;
+        font-size: 10px;
+    }
+    .farm-admin-row input {
+        font-size: 10px;
+        padding: 2px 4px;
+    }
+    .farm-admin-grid {
+        grid-template-columns: 1fr;
+    }
+    .farm-inventory-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
